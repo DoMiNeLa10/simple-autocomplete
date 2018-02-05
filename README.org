@@ -1,6 +1,6 @@
 #+TITLE: =simple-autocomplete= - easy to style autocompletion library
 
-This package provides an autocompletion library, which should be simple to
+This repository provides an autocompletion library, which should be simple to
 customize. It's written in ECMAScript 6, but it could be transpiled with babel
 to work in older browsers.
 
