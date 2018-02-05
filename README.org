@@ -1,0 +1,124 @@
+#+TITLE: =simple-autocomplete= - easy to style autocompletion library
+
+This package provides an autocompletion library, which should be simple to
+customize. It's written in ECMAScript 6, but it could be transpiled with babel
+to work in older browsers.
+
+* Using this library
+This library contains a single class, =Autocompleter=. It's constructor takes
+a single Object with description of the autocompleter to create.
+
+#+BEGIN_SRC js
+  const myCompletions = ["ActionScript", "AppleScript", "Asp", "BASIC", "C",
+                         "C++", "Clojure", "COBOL", "ColdFusion", "Erlang",
+                         "Fortran", "Groovy", "Haskell", "Java", "JavaScript",
+                         "Lisp", "Perl", "PHP", "Python", "Ruby", "Scala",
+                         "Scheme"];
+
+  let autocompleter = new Autocompleter({
+    completions: myCompletions,
+    container: document.getElementById("completer"),
+    callback: (result) =>
+      document.getElementById("result").textContent = result,
+    options: {
+      caseInsensitive: true,
+      emptyPlaceholder: "select a programming language…",
+      highlightClass: "selection",
+      focus: true,
+    }
+  });
+#+END_SRC
+
+Description Object passed to ~Autocompleter~ can have following properties:
+- ~container~ (required) :: Element within which autocompleter should create
+     it's interface. Preferably an empty =<div>= element.
+- ~completions~ :: Array of Strings with initial completions. It's not
+                   required, and completions can be changed later.
+- ~callback~ (required) :: Function which should be called when user picks an
+     option.
+- ~options~ :: Object which can contain following properties:
+  - ~caseInsensitive~ :: Boolean telling whether case should matter when
+       selecting options. Defaults to ~false~.
+  - ~resultLimit~ :: Number of completions displayed to the user. ~0~ or less
+                     means no limit.
+  - ~focus~ :: Boolean telling whether input element should be focused when
+               autocompleter is created. Defaults to ~false~.
+  - ~onlyKnownCompletions~ :: Boolean, when true lets user choose only
+       predefined options and tries to expand to matches when user tries to
+       confirm an invalid option. Defaults to ~true~.
+  - ~emptyPlaceholder~ (recommended) :: String with text which should be
+       displayed to the user in the empty input element.
+  - ~highlightClass~ (recommended) :: String with name of the CSS class which
+       should be used to emphasize option highlighted with keyboard.
+
+** Updating completions
+Completions can be updated with ~Autocompleter.prototype.updateCompletions()~,
+which takes a single argument, an Array of new Completions. Current
+completions are stored in the ~completions~ property.
+
+** Cleaning input
+Input should be cleared by calling ~Autocompleter.prototype.clearInput()~,
+which will update available completions as well.
+
+* Styling autocompletion
+This library creates a simple structure for the autocompleter, which should be
+easy to style as well.
+
+Structure will look as follows:
+#+BEGIN_SRC html
+<div id="myAutocompleter"=>
+  <input placeholder="placeholder text" />
+  <ul>
+    <li>option a</li>
+    <li class="myHighlight">option b</li>
+    <li>option c</li>
+    <li>option d</li>
+  </ul>
+</div>
+#+END_SRC
+
+Autocompleter is created within a specified =<div>= element. It doesn't need
+to have an id nor a class, but these can be defined if needed. =<input>= and
+=<ul>= elements have no classes or ids by default. Highlighted option has its
+corresponding =<li>= element set with a class, which has its name defined when
+autocompleter is created.
+
+Styling the hovered over option is a matter of simply using a ~:hover~
+selector on =<li>= elements.
+
+In summary:
+- =<div>= :: Container for the autocompleter, not created by the library.
+  - =<input>= :: Input element into which user types choices. Its
+                 =placeholder= is set in code.
+  - =<ul>= :: List of suggestions.
+    - =<li>= :: A suggestion. If it's highlighted, its =class= is set to
+                ~options.highlightClass~.
+
+Example CSS (with ids and classes corresponding to HTML example):
+#+BEGIN_SRC css
+  #myAutocompleter {
+    margin: auto;
+    text-align: center;
+  }
+
+  #myAutocompleter * {
+    width: 50vw;
+    margin: auto;
+  }
+
+  #myAutocompleter ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  #myAutocompleter li {
+    width: 20vw;
+    margin: 0.25em auto;
+    padding: 0.3em 0;
+  }
+
+  .myHighlight, #myAutocompleter li:hover {
+    background-color: #FF0;
+    cursor: pointer;
+  }
+    #+END_SRC
