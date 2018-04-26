@@ -5,7 +5,7 @@ const Autocompleter = (() => {
 
   const includes = (array, element) => {
     for (const key of array) {
-      if (key === element) {    // won't work with NaNs but it's close enough
+      if (Object.is(key, element)) {
         return true;
       }
     }
